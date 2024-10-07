@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Site Homepage</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #252525 0%, #000000 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            padding: 8px;
+            text-align: center;
+            width: 75%;
+        }
+
+        .trader {
+            background-color: #f0d681;
+            border-radius: 20px;
+            padding-left: 10%;
+            padding-top: 1%;
+            padding-bottom: 5%;
+            padding-right: 10%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        h2, h3 {
+            color: #000;
+            font-size: 20px;
+        }
+
+        p {
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #f5d76a;
+            color: #000;
+            border: 2px solid black;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover, button:focus {
+            background-color: #eec840;
+        }
+
+        button:disabled {
+            background-color: #e1c765;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #status-box {
+            background-color: #9f9f9f;
+            padding-left: 3%;
+            padding-right: 3%;
+            border-radius: 5px;
+            text-align: center;
+            width: 30%; /* Takes up 50% of its parent container's width */
+        }
+
+        .stat-box {
+            background-color: #9f9f9f;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #lukieDollars {
+            font-size: 100%;
+        }
+
+        #jenBucks {
+            font-size: 100%;
+        }
+
+        .button {
+            transition-duration: 0.4s;
+        }
+
+        .button:hover {
+            background-color: #04AA6D; /* Green */
+            color: white;
+        }
+
+        @media (min-width: 610px) {
+            /* Adjustments for tablets and larger screens */
+            h1 {
+                font-size: 36px;
+            }
+            .stats-grid {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>Hi Jen, welcome to LukieDollars.</h1>
+        <div class="trader">
+            <h2>The market is <span id="marketStatus"></span></h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <p id="lukieDollars"></p>
+                </div>
+                <div class="stat-box">
+                    <p id="jenBucks"></p>
+                </div>
+                <h4 style = "color:#000"><u>Jen's Account</u></h4>
+                <a href = "coupons/10_min_massage.html"><button>🐻 10 Minute Massage 🐻</button></a>
+                <a href = "coupons/20_min_massage.html"><button>🐻‍❄️ 20 Minute Massage 🐻‍❄️</button></a>
+                <a href = "coupons/30_min_massage.html"><button href = "coupons/30_min_massage.html">💆‍♀️ 30 Minute Massage 💆‍♀️</button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const generateRandomPrice = (base) => {
+            return (base + Math.random() * 2 - 1).toFixed(2);
+        };
+
+        const generatePriceData = () => {
+            let lukieBase = 100;
+            let jenBase = 80;
+
+            return {
+                lukieDollars: parseFloat(generateRandomPrice(lukieBase)),
+                jenBucks: parseFloat(generateRandomPrice(jenBase))
+            };
+        };
+
+        let currentPrices = generatePriceData();
+
+        const updatePrices = () => {
+            currentPrices = {
+                lukieDollars: parseFloat(generateRandomPrice(currentPrices.lukieDollars)),
+                jenBucks: parseFloat(generateRandomPrice(currentPrices.jenBucks))
+            };
+
+            document.getElementById('lukieDollars').textContent = `Lukie Dollars: $${currentPrices.lukieDollars}`;
+            document.getElementById('jenBucks').textContent = `Jen Bucks: $${currentPrices.jenBucks}`;
+        };
+
+        const checkMarketStatus = () => {
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            const marketOpen = currentHour >= 5 && currentHour <= 13; // Market is open from 5 AM to 1 PM
+
+            const marketStatusElement = document.getElementById('marketStatus');
+
+            if (marketOpen) {
+                marketStatusElement.textContent = "open";
+                marketStatusElement.style.color = '#02ab17';
+                updatePrices(); // Update prices immediately
+            } else {
+                const lukieDollarsDiv = document.getElementById("lukieDollars").parentElement; // Get the parent div
+                const jenBucksDiv = document.getElementById("jenBucks").parentElement; // Get the parent div
+                lukieDollarsDiv.style.display = "none";
+                jenBucksDiv.style.display = "none";
+                marketStatusElement.style.color = '#bf0000';
+                marketStatusElement.textContent = "closed";
+            }
+
+            return marketOpen;
+        };
+
+        // Check market status and update prices accordingly every 5 seconds
+        setInterval(() => {
+            if (checkMarketStatus()) {
+                updatePrices();
+            }
+        }, 5000);
+
+        // Initial render and status check
+        checkMarketStatus();
+    </script>
+</body>
+</html>

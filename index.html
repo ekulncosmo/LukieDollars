@@ -240,7 +240,7 @@
             const now = new Date();
             const currentHour = now.getHours();
 
-            const marketOpen = true; //currentHour >= 5 && currentHour <= 13; Market is open from 5 AM to 1 PM
+            const marketOpen = currentHour >= 5 && currentHour <= 13; // Market is open from 5 AM to 1 PM
 
             const marketStatusElement = document.getElementById('marketStatus');
 
